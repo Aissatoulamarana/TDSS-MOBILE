@@ -1,6 +1,6 @@
-import { User, LoginCredentials } from '../types/index';
-import apiService from './apiService';
-import * as SecureStore from 'expo-secure-store';
+import * as SecureStore from "expo-secure-store";
+import { LoginCredentials, User } from "../types/index";
+import apiService from "./apiService";
 
 class AuthService {
   async login(email: string, password: string): Promise<User> {
@@ -9,21 +9,21 @@ class AuthService {
 
     if (response.success && response.user) {
       // Stocker le token de manière sécurisée
-      await SecureStore.setItemAsync('authToken', response.user.token);
+      await SecureStore.setItemAsync("authToken", response.user.token);
       return response.user;
     }
 
-    throw new Error(response.message || 'Erreur de connexion');
+    throw new Error(response.message || "Erreur de connexion");
   }
 
   async logout(): Promise<void> {
-    await SecureStore.deleteItemAsync('authToken');
+    await SecureStore.deleteItemAsync("authToken");
     await apiService.logout();
   }
 
   async getStoredToken(): Promise<string | null> {
     try {
-      return await SecureStore.getItemAsync('authToken');
+      return await SecureStore.getItemAsync("authToken");
     } catch {
       return null;
     }

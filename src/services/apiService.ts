@@ -1,7 +1,13 @@
-import { LoginCredentials, LoginResponse, Card, ApiError } from '../types/index';
+import {
+  ApiError,
+  Card,
+  LoginCredentials,
+  LoginResponse,
+} from "../types/index";
 
 // Configuration - À adapter avec votre backend TDSS-Declaration
-const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3000/api';
+const API_BASE_URL =
+  process.env.EXPO_PUBLIC_API_URL || "http://localhost:3000/api";
 
 class ApiService {
   private token: string | null = null;
@@ -14,8 +20,8 @@ class ApiService {
     if (!response.ok) {
       const errorData = await response.json();
       throw {
-        code: 'API_ERROR',
-        message: errorData.message || 'Une erreur est survenue',
+        code: "API_ERROR",
+        message: errorData.message || "Une erreur est survenue",
         statusCode: response.status,
       } as ApiError;
     }
@@ -24,20 +30,20 @@ class ApiService {
 
   async login(credentials: LoginCredentials): Promise<LoginResponse> {
     try {
-      const response = await fetch(`${API_BASE_URL}/auth/login`, {
-        method: 'POST',
+      const response = await fetch(`${API_BASE_URL}/auth/jwt/create/`, {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(credentials),
       });
 
       const data = await this.handleResponse<LoginResponse>(response);
-      
+
       if (data.user?.token) {
         this.setToken(data.user.token);
       }
-      
+
       return data;
     } catch (error) {
       throw error;
@@ -47,10 +53,10 @@ class ApiService {
   async validateQRCode(qrCode: string): Promise<Card> {
     try {
       const response = await fetch(`${API_BASE_URL}/cards/validate`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.token}`,
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${this.token}`,
         },
         body: JSON.stringify({ qrCode }),
       });
@@ -64,9 +70,9 @@ class ApiService {
   async getCardDetails(cardId: string): Promise<Card> {
     try {
       const response = await fetch(`${API_BASE_URL}/cards/${cardId}`, {
-        method: 'GET',
+        method: "GET",
         headers: {
-          'Authorization': `Bearer ${this.token}`,
+          Authorization: `Bearer ${this.token}`,
         },
       });
 

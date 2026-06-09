@@ -24,7 +24,7 @@ export interface Card {
   holderName: string;
   expiryDate: string;
   issueDate: string;
-  status: 'valid' | 'expired' | 'invalid' | 'revoked';
+  status: "valid" | "expired" | "invalid" | "revoked";
   cardType: string;
 }
 
