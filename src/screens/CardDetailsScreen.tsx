@@ -1,5 +1,5 @@
 import { LinearGradient } from "expo-linear-gradient";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import {
   Animated,
   SafeAreaView,
@@ -9,50 +9,62 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { Card } from "../types/index";
+import { Employee } from "../types/index";
 
 interface CardDetailsScreenProps {
-  card: Card;
+  employee: Employee;
   onGoBack: () => void;
 }
 
 export default function CardDetailsScreen({
-  card,
+  employee,
   onGoBack,
 }: CardDetailsScreenProps) {
-  const [statusColor, setStatusColor] = useState("#4CAF50");
-  const [statusLabel, setStatusLabel] = useState("Valide");
-  const animatedScale = new Animated.Value(0);
+  const animatedScale = useRef(new Animated.Value(0)).current;
+  const employeeName = [employee.first, employee.last]
+    .filter(Boolean)
+    .join(" ");
+  const isValid = ["validated", "printed", "delivered"].includes(
+    employee.status,
+  );
+
+  const status = useMemo(() => {
+    switch (employee.status) {
+      case "validated":
+      case "printed":
+      case "delivered":
+        return {
+          color: "#4CAF50",
+          label: employee.status_display || "Valide",
+          description: "Carte authentifiée",
+        };
+      case "processing":
+        return {
+          color: "#FF9800",
+          label: employee.status_display || "En traitement",
+          description: "Carte en cours de validation",
+        };
+      case "rejected":
+        return {
+          color: "#F44336",
+          label: employee.status_display || "Rejetée",
+          description: "Carte non authentifiée",
+        };
+      default:
+        return {
+          color: "#667eea",
+          label: employee.status_display || employee.status || "Statut inconnu",
+          description: "Statut reçu du backend",
+        };
+    }
+  }, [employee.status, employee.status_display]);
 
   useEffect(() => {
-    // Déterminer la couleur et le label selon le statut
-    switch (card.status) {
-      case "valid":
-        setStatusColor("#4CAF50");
-        setStatusLabel("Valide");
-        break;
-      case "expired":
-        setStatusColor("#FF9800");
-        setStatusLabel("Expiré");
-        break;
-      case "invalid":
-        setStatusColor("#F44336");
-        setStatusLabel("Invalide");
-        break;
-      case "revoked":
-        setStatusColor("#9C27B0");
-        setStatusLabel("Révoquée");
-        break;
-    }
-
-    // Animation d'entrée
     Animated.spring(animatedScale, {
       toValue: 1,
       useNativeDriver: true,
     }).start();
-  }, [card.status]);
-
-  const isValid = card.status === "valid";
+  }, [animatedScale]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -60,7 +72,7 @@ export default function CardDetailsScreen({
         <TouchableOpacity onPress={onGoBack} style={styles.backButton}>
           <Text style={styles.backButtonText}>← Retour</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Détails de la Carte</Text>
+        <Text style={styles.headerTitle}>Détails de la carte</Text>
         <View style={styles.headerSpacer} />
       </View>
 
@@ -69,131 +81,202 @@ export default function CardDetailsScreen({
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Status Card */}
         <Animated.View
           style={[
             styles.statusCard,
             {
-              transform: [
-                {
-                  scale: animatedScale,
-                },
-              ],
+              transform: [{ scale: animatedScale }],
             },
           ]}
         >
           <LinearGradient
-            colors={[statusColor, statusColor + "CC"]}
+            colors={[status.color, `${status.color}CC`]}
             style={styles.statusGradient}
           >
             <View style={styles.statusIcon}>
               <Text style={styles.statusIconText}>{isValid ? "✓" : "✕"}</Text>
             </View>
-            <Text style={styles.statusText}>{statusLabel}</Text>
-            <Text style={styles.statusDescription}>
-              {isValid ? "Carte authentifiée" : "Carte non authentifiée"}
-            </Text>
+            <Text style={styles.statusText}>{status.label}</Text>
+            <Text style={styles.statusDescription}>{status.description}</Text>
           </LinearGradient>
         </Animated.View>
 
-        {/* Card Information */}
         <View style={styles.infoSection}>
-          <Text style={styles.sectionTitle}>Informations de la Carte</Text>
+          <Text style={styles.sectionTitle}>Informations de la carte</Text>
 
           <View style={styles.infoCard}>
             <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Type de Carte</Text>
-              <Text style={styles.infoValue}>{card.cardType}</Text>
+              <Text style={styles.infoLabel}>Type de déclaration</Text>
+              <Text style={styles.infoValue}>
+                {employee.type_display || employee.type || "-"}
+              </Text>
             </View>
 
             <View style={[styles.infoRow, styles.infoRowBorder]}>
-              <Text style={styles.infoLabel}>Numéro de Carte</Text>
+              <Text style={styles.infoLabel}>Numéro de carte</Text>
               <Text style={styles.infoValue}>
-                •••• •••• •••• {card.cardNumber.slice(-4)}
+                {formatCardNumber(employee.card_number)}
               </Text>
             </View>
 
             <View style={[styles.infoRow, styles.infoRowBorder]}>
               <Text style={styles.infoLabel}>Titulaire</Text>
-              <Text style={styles.infoValue}>{card.holderName}</Text>
+              <Text style={styles.infoValue}>{employeeName || "-"}</Text>
+            </View>
+
+            <View style={[styles.infoRow, styles.infoRowBorder]}>
+              <Text style={styles.infoLabel}>Passeport</Text>
+              <Text style={styles.infoValue}>
+                {employee.passport_number || "-"}
+              </Text>
+            </View>
+
+            <View style={[styles.infoRow, styles.infoRowBorder]}>
+              <Text style={styles.infoLabel}>Fonction</Text>
+              <Text style={styles.infoValue}>{employee.job?.name || "-"}</Text>
             </View>
 
             <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>ID Carte</Text>
+              <Text style={styles.infoLabel}>Référence</Text>
               <Text style={[styles.infoValue, styles.codeValue]}>
-                {card.id.slice(0, 20)}...
+                {employee.reference || employee.slug || "-"}
               </Text>
             </View>
           </View>
         </View>
 
-        {/* Validity Dates */}
+        <View style={styles.infoSection}>
+          <Text style={styles.sectionTitle}>Employeur</Text>
+
+          <View style={styles.infoCard}>
+            <View style={styles.infoRow}>
+              <Text style={styles.infoLabel}>Entreprise</Text>
+              <Text style={styles.infoValue}>
+                {employee.company_name || "-"}
+              </Text>
+            </View>
+
+            <View style={[styles.infoRow, styles.infoRowBorder]}>
+              <Text style={styles.infoLabel}>Sigle</Text>
+              <Text style={styles.infoValue}>
+                {employee.company_sigle || "-"}
+              </Text>
+            </View>
+
+            <View style={[styles.infoRow, styles.infoRowBorder]}>
+              <Text style={styles.infoLabel}>Déclaration</Text>
+              <Text style={styles.infoValue}>
+                {employee.declaration_number || "-"}
+              </Text>
+            </View>
+          </View>
+        </View>
+
         <View style={styles.infoSection}>
           <Text style={styles.sectionTitle}>Validité</Text>
 
           <View style={styles.datesContainer}>
             <View style={[styles.dateBox, styles.issueDateBox]}>
-              <Text style={styles.dateLabel}>Date d'Émission</Text>
-              <Text style={styles.dateValue}>{formatDate(card.issueDate)}</Text>
+              <Text style={styles.dateLabel}>{"Date d'émission"}</Text>
+              <Text style={styles.dateValue}>
+                {formatDate(employee.card_issued_at)}
+              </Text>
             </View>
 
             <View style={[styles.dateBox, styles.expiryDateBox]}>
-              <Text style={styles.dateLabel}>Date d'Expiration</Text>
+              <Text style={styles.dateLabel}>{"Date d'expiration"}</Text>
               <Text
                 style={[styles.dateValue, !isValid && styles.dateValueExpired]}
               >
-                {formatDate(card.expiryDate)}
+                {formatDate(employee.card_expires_at)}
               </Text>
             </View>
           </View>
         </View>
 
-        {/* Authenticity Badge */}
+        <View style={styles.infoSection}>
+          <Text style={styles.sectionTitle}>Contrat</Text>
+
+          <View style={styles.infoCard}>
+            <View style={styles.infoRow}>
+              <Text style={styles.infoLabel}>Début</Text>
+              <Text style={styles.infoValue}>
+                {formatDate(employee.contract_starts_at)}
+              </Text>
+            </View>
+
+            <View style={[styles.infoRow, styles.infoRowBorder]}>
+              <Text style={styles.infoLabel}>Durée</Text>
+              <Text style={styles.infoValue}>
+                {formatContractDuration(employee.contract_duration)}
+              </Text>
+            </View>
+          </View>
+        </View>
+
         <View style={styles.infoSection}>
           <Text style={styles.sectionTitle}>Authentification</Text>
 
-          <View style={[styles.infoCard, { paddingVertical: 20 }]}>
+          <View style={[styles.infoCard, styles.authCard]}>
             <View style={styles.authenticityBadge}>
-              <Text style={styles.badgeIcon}>🛡️</Text>
+              <Text style={styles.badgeIcon}>{isValid ? "✓" : "!"}</Text>
               <View style={styles.badgeContent}>
                 <Text style={styles.badgeTitle}>
-                  {isValid ? "Carte Authentifiée" : "Carte Non Vérifiée"}
+                  {isValid ? "Carte authentifiée" : "Carte non vérifiée"}
                 </Text>
                 <Text style={styles.badgeDescription}>
                   {isValid
-                    ? "Cette carte a été vérifiée par nos systèmes de sécurité"
-                    : "Cette carte n'a pas pu être vérifiée"}
+                    ? "Cette carte a été vérifiée par le système."
+                    : "Cette carte n'a pas encore un statut validé."}
                 </Text>
               </View>
             </View>
           </View>
         </View>
 
-        {/* Actions */}
         <View style={styles.actionsSection}>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={[
               styles.actionButton,
               isValid ? styles.approveButton : styles.rejectButton,
             ]}
           >
             <Text style={styles.actionButtonText}>
-              {isValid ? "✓ Accepter" : "✕ Refuser"}
+              {isValid ? "Accepter" : "Refuser"}
             </Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
 
-          <TouchableOpacity style={styles.secondaryButton}>
-            <Text style={styles.secondaryButtonText}>📋 Rapport</Text>
-          </TouchableOpacity>
+          {/* <TouchableOpacity style={styles.secondaryButton}>
+            <Text style={styles.secondaryButtonText}>Rapport</Text>
+          </TouchableOpacity> */}
         </View>
       </ScrollView>
     </SafeAreaView>
   );
 }
 
+function formatCardNumber(cardNumber: string): string {
+  if (!cardNumber) return "-";
+
+  return cardNumber.replace(/(.{4})/g, "$1 ").trim();
+}
+
+function formatContractDuration(duration: number): string {
+  if (!duration) return "-";
+
+  return `${duration} mois`;
+}
+
 function formatDate(dateString: string): string {
+  if (!dateString) return "-";
+
   try {
     const date = new Date(dateString);
+
+    if (Number.isNaN(date.getTime())) {
+      return dateString;
+    }
+
     return date.toLocaleDateString("fr-FR", {
       year: "numeric",
       month: "long",
@@ -304,6 +387,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 16,
     paddingVertical: 14,
+    gap: 12,
   },
   infoRowBorder: {
     borderTopWidth: 1,
@@ -351,22 +435,36 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: "#666",
     marginBottom: 8,
+    textAlign: "center",
   },
   dateValue: {
     fontSize: 16,
     fontWeight: "700",
     color: "#333",
+    textAlign: "center",
   },
   dateValueExpired: {
     color: "#F44336",
+  },
+  authCard: {
+    paddingVertical: 20,
   },
   authenticityBadge: {
     flexDirection: "row",
     alignItems: "center",
     gap: 16,
+    paddingHorizontal: 16,
   },
   badgeIcon: {
-    fontSize: 40,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#667eea",
+    color: "#fff",
+    fontSize: 24,
+    fontWeight: "700",
+    textAlign: "center",
+    lineHeight: 40,
   },
   badgeContent: {
     flex: 1,

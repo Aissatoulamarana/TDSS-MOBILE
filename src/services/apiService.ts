@@ -1,6 +1,6 @@
 import {
   ApiError,
-  Card,
+  Employee,
   LoginCredentials,
   LoginResponse,
 } from "../types/index";
@@ -40,8 +40,8 @@ class ApiService {
 
       const data = await this.handleResponse<LoginResponse>(response);
 
-      if (data.user?.token) {
-        this.setToken(data.user.token);
+      if (data.access) {
+        this.setToken(data.access);
       }
 
       return data;
@@ -50,36 +50,36 @@ class ApiService {
     }
   }
 
-  async validateQRCode(qrCode: string): Promise<Card> {
-    try {
-      const response = await fetch(`${API_BASE_URL}/cards/validate`, {
+  // Vérification par numéro de carte (QR code) → POST /api/declarations/employees/by-card-number/
+  async getEmployeeByCardNumber(cardNumber: string): Promise<Employee> {
+    const response = await fetch(
+      `${API_BASE_URL}/declarations/employees/by-card-number/`,
+      {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${this.token}`,
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ qrCode }),
-      });
-
-      return this.handleResponse<Card>(response);
-    } catch (error) {
-      throw error;
-    }
+        body: JSON.stringify({ card_number: cardNumber }),
+      },
+    );
+    return this.handleResponse<Employee>(response);
   }
 
-  async getCardDetails(cardId: string): Promise<Card> {
-    try {
-      const response = await fetch(`${API_BASE_URL}/cards/${cardId}`, {
-        method: "GET",
+  // Vérification par numéro de passeport → POST /api/declarations/employees/by-passport/
+  async getEmployeeByPassport(passportNumber: string): Promise<Employee> {
+    const response = await fetch(
+      `${API_BASE_URL}/declarations/employees/by-passport/`,
+      {
+        method: "POST",
         headers: {
           Authorization: `Bearer ${this.token}`,
+          "Content-Type": "application/json",
         },
-      });
-
-      return this.handleResponse<Card>(response);
-    } catch (error) {
-      throw error;
-    }
+        body: JSON.stringify({ passport_number: passportNumber }),
+      },
+    );
+    return this.handleResponse<Employee>(response);
   }
 
   async logout(): Promise<void> {

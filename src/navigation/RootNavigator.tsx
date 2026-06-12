@@ -2,15 +2,17 @@ import { useEffect, useState } from "react";
 import { ActivityIndicator, View } from "react-native";
 import AuthScreen from "../screens/AuthScreen";
 import CardDetailsScreen from "../screens/CardDetailsScreen";
+import HomeScreen from "../screens/HomeScreen";
 import QRScannerScreen from "../screens/QRScannerScreen";
 import authService from "../services/authService";
-import { Card, User } from "../types/index";
+import { Employee, User } from "../types/index";
 
 type ScreenState =
   | { type: "loading" }
   | { type: "auth" }
-  | { type: "scanner" }
-  | { type: "details"; card: Card };
+  | { type: "home" }
+  | { type: "scanner"; mode: "qr" | "passport" }
+  | { type: "details"; employee: Employee };
 
 export default function RootNavigator() {
   const [screenState, setScreenState] = useState<ScreenState>({
@@ -18,7 +20,6 @@ export default function RootNavigator() {
   });
   const [user, setUser] = useState<User | null>(null);
 
-  // Vérifier si l'utilisateur est connecté au démarrage
   useEffect(() => {
     restoreSession();
   }, []);
@@ -28,7 +29,7 @@ export default function RootNavigator() {
       const storedUser = await authService.restoreToken();
       if (storedUser) {
         setUser(storedUser);
-        setScreenState({ type: "scanner" });
+        setScreenState({ type: "home" });
       } else {
         setScreenState({ type: "auth" });
       }
@@ -39,7 +40,7 @@ export default function RootNavigator() {
 
   const handleLoginSuccess = (newUser: User) => {
     setUser(newUser);
-    setScreenState({ type: "scanner" });
+    setScreenState({ type: "home" });
   };
 
   const handleLogout = async () => {
@@ -48,19 +49,10 @@ export default function RootNavigator() {
     setScreenState({ type: "auth" });
   };
 
-  const handleCardScanned = (card: Card) => {
-    setScreenState({ type: "details", card });
+  const handleEmployeeFound = (employee: Employee) => {
+    setScreenState({ type: "details", employee });
   };
 
-  const handleGoBack = () => {
-    setScreenState({ type: "scanner" });
-  };
-
-  const handleReturnToScanner = () => {
-    setScreenState({ type: "scanner" });
-  };
-
-  // Rendu du chargement
   if (screenState.type === "loading") {
     return (
       <View
@@ -76,34 +68,38 @@ export default function RootNavigator() {
     );
   }
 
-  // Rendu de l'écran d'authentification
   if (screenState.type === "auth") {
     return <AuthScreen onLoginSuccess={handleLoginSuccess} />;
   }
 
-  // Rendu de l'écran du scanner QR
-  if (screenState.type === "scanner") {
+  if (screenState.type === "home" && user) {
     return (
-      <View
-        style={{
-          flex: 1,
-          backgroundColor: "#fff",
-        }}
-      >
-        <QRScannerScreen
-          onCardScanned={handleCardScanned}
-          onGoBack={handleLogout}
-        />
-      </View>
+      <HomeScreen
+        user={user}
+        onScanQR={() => setScreenState({ type: "scanner", mode: "qr" })}
+        onSearchPassport={() =>
+          setScreenState({ type: "scanner", mode: "passport" })
+        }
+        onLogout={handleLogout}
+      />
     );
   }
 
-  // Rendu de l'écran des détails de la carte
-  if (screenState.type === "details" && screenState.card) {
+  if (screenState.type === "scanner") {
+    return (
+      <QRScannerScreen
+        initialMode={screenState.mode}
+        onCardScanned={handleEmployeeFound}
+        onGoBack={() => setScreenState({ type: "home" })}
+      />
+    );
+  }
+
+  if (screenState.type === "details") {
     return (
       <CardDetailsScreen
-        card={screenState.card}
-        onGoBack={handleReturnToScanner}
+        employee={screenState.employee}
+        onGoBack={() => setScreenState({ type: "home" })}
       />
     );
   }
