@@ -1,5 +1,6 @@
 import {
   ApiError,
+  CurrentUser,
   Employee,
   LoginCredentials,
   LoginResponse,
@@ -48,6 +49,18 @@ class ApiService {
     } catch (error) {
       throw error;
     }
+  }
+
+  // Utilisateur connecté
+
+  async getMe(): Promise<CurrentUser> {
+    const response = await fetch(`${API_BASE_URL}/users/me/`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${this.token}`,
+      },
+    });
+    return this.handleResponse<CurrentUser>(response);
   }
 
   // Vérification par numéro de carte (QR code) → POST /api/declarations/employees/by-card-number/

@@ -1,10 +1,33 @@
 // Auth
+export interface UserCompany {
+  slug: string;
+  name: string;
+  type_name: string;
+  type_code: string;
+  contact: string;
+  status: "ON" | "OFF" | string;
+  picture: string;
+}
+
+export interface CurrentUser {
+  slug: string;
+  name: string;
+  email: string;
+  phone: string;
+  type_name: string;
+  type_code: string;
+  picture: string;
+  is_active: boolean;
+  company: UserCompany[];
+}
+
 export interface User {
   id: string;
   email: string;
   fullName: string;
   accessToken: string;
   refreshToken: string;
+  profile?: CurrentUser;
 }
 
 export interface LoginCredentials {
