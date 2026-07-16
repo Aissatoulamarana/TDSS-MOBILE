@@ -1,6 +1,5 @@
 import { LinearGradient } from "expo-linear-gradient";
 import {
-  Dimensions,
   StatusBar,
   StyleSheet,
   Text,
@@ -8,9 +7,8 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { BrandColors, BrandGradient } from "../constants/theme";
 import { User } from "../types/index";
-
-const { width } = Dimensions.get("window");
 
 interface Props {
   user: User;
@@ -30,7 +28,7 @@ export default function HomeScreen({
       <StatusBar barStyle="light-content" />
 
       {/* Header gradient */}
-      <LinearGradient colors={["#667eea", "#764ba2"]} style={styles.header}>
+      <LinearGradient colors={BrandGradient} style={styles.header}>
         <SafeAreaView edges={["top"]}>
           <View style={styles.headerContent}>
             <View>
@@ -63,7 +61,7 @@ export default function HomeScreen({
           activeOpacity={0.85}
         >
           <View
-            style={[styles.cardIconContainer, { backgroundColor: "#eef0ff" }]}
+            style={[styles.cardIconContainer, { backgroundColor: BrandColors.cream }]}
           >
             <Text style={styles.cardIcon}>📷</Text>
           </View>
@@ -74,7 +72,7 @@ export default function HomeScreen({
               vérification instantanée
             </Text>
           </View>
-          <View style={[styles.cardArrow, { backgroundColor: "#667eea" }]}>
+          <View style={[styles.cardArrow, { backgroundColor: BrandColors.orange }]}>
             <Text style={styles.cardArrowText}>→</Text>
           </View>
         </TouchableOpacity>
@@ -86,7 +84,7 @@ export default function HomeScreen({
           activeOpacity={0.85}
         >
           <View
-            style={[styles.cardIconContainer, { backgroundColor: "#f0eeff" }]}
+            style={[styles.cardIconContainer, { backgroundColor: BrandColors.mist }]}
           >
             <Text style={styles.cardIcon}>🪪</Text>
           </View>
@@ -97,7 +95,7 @@ export default function HomeScreen({
               employé
             </Text>
           </View>
-          <View style={[styles.cardArrow, { backgroundColor: "#764ba2" }]}>
+          <View style={[styles.cardArrow, { backgroundColor: BrandColors.navy }]}>
             <Text style={styles.cardArrowText}>→</Text>
           </View>
         </TouchableOpacity>
@@ -115,7 +113,7 @@ export default function HomeScreen({
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: "#f5f6fa" },
+  root: { flex: 1, backgroundColor: "#F4F7F8" },
   header: {
     paddingHorizontal: 24,
     paddingBottom: 40,
@@ -169,7 +167,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 16,
-    shadowColor: "#667eea",
+    shadowColor: BrandColors.navy,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.08,
     shadowRadius: 16,
@@ -187,7 +185,7 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontSize: 16,
     fontWeight: "700",
-    color: "#1a1a2e",
+    color: BrandColors.navyDark,
     marginBottom: 4,
   },
   cardDescription: {

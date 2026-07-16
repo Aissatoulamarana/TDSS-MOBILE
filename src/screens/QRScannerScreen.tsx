@@ -13,6 +13,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { BrandColors, BrandGradient } from "../constants/theme";
 import apiService from "../services/apiService";
 import { Employee } from "../types/index";
 
@@ -146,7 +147,7 @@ export default function QRScannerScreen({
   if (mode === "qr" && !permission) {
     return (
       <View style={styles.center}>
-        <ActivityIndicator color="#667eea" />
+        <ActivityIndicator color={BrandColors.orange} />
         <Text style={styles.infoText}>Vérification des permissions...</Text>
       </View>
     );
@@ -156,7 +157,7 @@ export default function QRScannerScreen({
     return (
       <View style={styles.permissionContainer}>
         <LinearGradient
-          colors={["#667eea", "#764ba2"]}
+          colors={BrandGradient}
           style={styles.permissionGradient}
         >
           <View style={styles.permissionContent}>
@@ -314,7 +315,7 @@ export default function QRScannerScreen({
       {/* Loading overlay pour le mode QR */}
       {mode === "qr" && loading && (
         <View style={styles.loadingOverlay}>
-          <ActivityIndicator size="large" color="#667eea" />
+          <ActivityIndicator size="large" color={BrandColors.orange} />
           <Text style={styles.loadingText}>Validation en cours...</Text>
         </View>
       )}
@@ -346,7 +347,7 @@ export default function QRScannerScreen({
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#fff" },
   center: { flex: 1, justifyContent: "center", alignItems: "center" },
-  infoText: { marginTop: 12, color: "#667eea", fontSize: 14 },
+  infoText: { marginTop: 12, color: BrandColors.orange, fontSize: 14 },
   header: {
     flexDirection: "row",
     alignItems: "center",
@@ -358,7 +359,7 @@ const styles = StyleSheet.create({
     borderBottomColor: "#f0f0f0",
   },
   backButton: { padding: 8 },
-  backButtonText: { fontSize: 16, fontWeight: "600", color: "#667eea" },
+  backButtonText: { fontSize: 16, fontWeight: "600", color: BrandColors.orange },
   headerTitle: { fontSize: 18, fontWeight: "700", color: "#333" },
   headerSpacer: { width: 60 },
   modeToggle: {
@@ -374,7 +375,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 10,
   },
-  modeButtonActive: { backgroundColor: "#667eea" },
+  modeButtonActive: { backgroundColor: BrandColors.orange },
   modeButtonText: { fontSize: 14, fontWeight: "600", color: "#666" },
   modeButtonTextActive: { color: "#fff" },
   cameraContainer: { flex: 1, position: "relative", overflow: "hidden" },
@@ -387,9 +388,9 @@ const styles = StyleSheet.create({
     width: 260,
     height: 260,
     borderWidth: 3,
-    borderColor: "#667eea",
+    borderColor: BrandColors.orange,
     borderRadius: 20,
-    backgroundColor: "rgba(102, 126, 234, 0.05)",
+    backgroundColor: "rgba(233, 120, 26, 0.08)",
   },
   scannerText: {
     marginTop: 20,
@@ -414,7 +415,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 10,
   },
-  flashButtonActive: { backgroundColor: "#667eea" },
+  flashButtonActive: { backgroundColor: BrandColors.orange },
   flashButtonText: { color: "#fff", fontWeight: "600", fontSize: 14 },
   passportContainer: {
     flex: 1,
@@ -422,10 +423,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
   },
   passportCard: {
-    backgroundColor: "#f8f8ff",
+    backgroundColor: BrandColors.mist,
     borderRadius: 16,
     padding: 24,
-    shadowColor: "#667eea",
+    shadowColor: BrandColors.navy,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 12,
@@ -450,12 +451,12 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
   },
   searchButton: {
-    backgroundColor: "#667eea",
+    backgroundColor: BrandColors.orange,
     borderRadius: 12,
     paddingVertical: 14,
     alignItems: "center",
   },
-  searchButtonDisabled: { backgroundColor: "#c5cdf7" },
+  searchButtonDisabled: { backgroundColor: "#F7C891" },
   searchButtonText: { fontSize: 16, fontWeight: "700", color: "#fff" },
   loadingOverlay: {
     ...StyleSheet.absoluteFillObject,
@@ -492,7 +493,7 @@ const styles = StyleSheet.create({
     marginBottom: 14,
   },
   verifyButton: {
-    backgroundColor: "#667eea",
+    backgroundColor: BrandColors.orange,
     borderRadius: 12,
     paddingVertical: 14,
     alignItems: "center",
@@ -504,13 +505,13 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#667eea",
+    borderColor: BrandColors.orange,
     backgroundColor: "#fff",
   },
   scanAgainButtonText: {
     fontSize: 16,
     fontWeight: "700",
-    color: "#667eea",
+    color: BrandColors.orange,
   },
   permissionContainer: { flex: 1 },
   permissionGradient: {
@@ -538,5 +539,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
     paddingVertical: 14,
   },
-  permissionButtonText: { fontSize: 16, fontWeight: "700", color: "#667eea" },
+  permissionButtonText: { fontSize: 16, fontWeight: "700", color: BrandColors.navy },
 });

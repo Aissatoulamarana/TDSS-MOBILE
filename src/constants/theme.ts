@@ -7,20 +7,33 @@ import '@/global.css';
 
 import { Platform } from 'react-native';
 
+export const BrandColors = {
+  navy: '#0B3551',
+  navyDark: '#09283D',
+  orange: '#E9781A',
+  amber: '#F5A623',
+  steel: '#3C4A50',
+  mist: '#EEF5F7',
+  cream: '#FFF7ED',
+  white: '#FFFFFF',
+} as const;
+
+export const BrandGradient = [BrandColors.orange, BrandColors.navy] as const;
+
 export const Colors = {
   light: {
-    text: '#000000',
+    text: BrandColors.navyDark,
     background: '#ffffff',
-    backgroundElement: '#F0F0F3',
-    backgroundSelected: '#E0E1E6',
-    textSecondary: '#60646C',
+    backgroundElement: BrandColors.mist,
+    backgroundSelected: '#D9E9EE',
+    textSecondary: BrandColors.steel,
   },
   dark: {
     text: '#ffffff',
-    background: '#000000',
-    backgroundElement: '#212225',
-    backgroundSelected: '#2E3135',
-    textSecondary: '#B0B4BA',
+    background: BrandColors.navyDark,
+    backgroundElement: '#12384F',
+    backgroundSelected: '#1D4A62',
+    textSecondary: '#C5D2D7',
   },
 } as const;
 

@@ -1,5 +1,7 @@
+import PermitHistoryScreen from "@/screens/PermitHistoryScreen";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, View } from "react-native";
+import { BrandColors } from "../constants/theme";
 import AuthScreen from "../screens/AuthScreen";
 import CardDetailsScreen from "../screens/CardDetailsScreen";
 import HomeScreen from "../screens/HomeScreen";
@@ -19,6 +21,7 @@ export default function RootNavigator() {
     type: "loading",
   });
   const [user, setUser] = useState<User | null>(null);
+  const [view, setView] = useState<"details" | "history">("details");
 
   useEffect(() => {
     restoreSession();
@@ -63,7 +66,7 @@ export default function RootNavigator() {
           backgroundColor: "#fff",
         }}
       >
-        <ActivityIndicator size="large" color="#667eea" />
+        <ActivityIndicator size="large" color={BrandColors.orange} />
       </View>
     );
   }
@@ -96,10 +99,20 @@ export default function RootNavigator() {
   }
 
   if (screenState.type === "details") {
+    if (view === "history") {
+      return (
+        <PermitHistoryScreen
+          employeeReference={screenState.employee.employee_reference}
+          onGoBack={() => setView("details")}
+        />
+      );
+    }
+
     return (
       <CardDetailsScreen
         employee={screenState.employee}
         onGoBack={() => setScreenState({ type: "home" })}
+        onViewHistory={() => setView("history")}
       />
     );
   }

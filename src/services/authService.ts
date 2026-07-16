@@ -42,7 +42,8 @@ class AuthService {
         refreshToken,
         profile,
       };
-    } catch {
+    } catch (error) {
+      console.warn("Impossible de restaurer la session TDSS", error);
       await this.logout();
       return null;
     }

@@ -122,3 +122,49 @@ export interface ApiError {
   message: string;
   statusCode: number;
 }
+
+// Historique des permis — POST /api/declarations/employees/by-employee-reference/
+export interface EmployeePermitHistoryItem {
+  slug: string;
+  reference: string;
+  passport_number: string;
+  card_number: string;
+  first: string;
+  last: string;
+  sexe: string;
+  sexe_display: string;
+  birthday: string;
+  birth_place: string;
+  email: string;
+  phone: string;
+  address: string;
+  residence: string;
+  country: string;
+  nationality: string;
+  job: EmployeeJob;
+  type: string;
+  type_display: string;
+  status:
+    | "processing"
+    | "validated"
+    | "rejected"
+    | "printed"
+    | "delivered"
+    | string;
+  status_display: string;
+  contract_starts_at: string;
+  contract_duration: number;
+  company_name: string;
+  company_sigle: string;
+  company_address: string;
+  card_issued_at: string;
+  card_expires_at: string;
+  created_on: string;
+}
+
+export interface EmployeePermitHistoryResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: EmployeePermitHistoryItem[];
+}

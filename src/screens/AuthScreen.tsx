@@ -3,6 +3,7 @@ import { useState } from "react";
 import {
   ActivityIndicator,
   Alert,
+  Image,
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
@@ -11,9 +12,15 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { BrandColors, BrandGradient } from "../constants/theme";
+import { User } from "../types/index";
 import authService from "../services/authService";
 
-export default function AuthScreen({ onLoginSuccess }) {
+interface Props {
+  onLoginSuccess: (user: User) => void;
+}
+
+export default function AuthScreen({ onLoginSuccess }: Props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -45,10 +52,17 @@ export default function AuthScreen({ onLoginSuccess }) {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={styles.container}
     >
-      <LinearGradient colors={["#667eea", "#764ba2"]} style={styles.gradient}>
+      <LinearGradient colors={BrandGradient} style={styles.gradient}>
         <View style={styles.content}>
           {/* En-tête */}
           <View style={styles.header}>
+            <View style={styles.logoContainer}>
+              <Image
+                source={require("../../assets/images/logo-full.png")}
+                style={styles.logo}
+                resizeMode="contain"
+              />
+            </View>
             <Text style={styles.appName}>TDSS Declaration</Text>
             <Text style={styles.subtitle}>Vérification de Cartes</Text>
           </View>
@@ -136,9 +150,27 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   header: {
-    marginTop: "15%",
-    marginBottom: 40,
+    marginTop: "10%",
+    marginBottom: 32,
     alignItems: "center",
+  },
+  logoContainer: {
+    width: 148,
+    height: 148,
+    borderRadius: 18,
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 18,
+    shadowColor: BrandColors.navyDark,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.18,
+    shadowRadius: 18,
+    elevation: 8,
+  },
+  logo: {
+    width: 128,
+    height: 128,
   },
   appName: {
     fontSize: 32,
@@ -210,7 +242,7 @@ const styles = StyleSheet.create({
   loginButtonText: {
     fontSize: 16,
     fontWeight: "700",
-    color: "#667eea",
+    color: BrandColors.navy,
     letterSpacing: 0.5,
   },
   footer: {

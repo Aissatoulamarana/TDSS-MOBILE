@@ -10,16 +10,19 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { BrandColors, BrandGradient } from "../constants/theme";
 import { Employee } from "../types/index";
 
 interface CardDetailsScreenProps {
   employee: Employee;
   onGoBack: () => void;
+  onViewHistory: (employeeReference: string) => void;
 }
 
 export default function CardDetailsScreen({
   employee,
   onGoBack,
+  onViewHistory,
 }: CardDetailsScreenProps) {
   const animatedY = useRef(new Animated.Value(30)).current;
   const animatedOpacity = useRef(new Animated.Value(0)).current;
@@ -62,9 +65,9 @@ export default function CardDetailsScreen({
         };
       default:
         return {
-          color: "#667eea",
-          bg: "#EEF2FF",
-          border: "#C7D2FE",
+          color: BrandColors.navy,
+          bg: BrandColors.mist,
+          border: "#C9DCE2",
           label: employee.status_display || employee.status || "Inconnu",
           icon: "?",
         };
@@ -113,7 +116,7 @@ export default function CardDetailsScreen({
           ]}
         >
           <LinearGradient
-            colors={["#667eea", "#764ba2"]}
+            colors={BrandGradient}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.heroGradient}
@@ -208,8 +211,8 @@ export default function CardDetailsScreen({
             <DateBox
               label="Émission"
               value={formatDate(employee.card_issued_at)}
-              accent="#667eea"
-              bg="#EEF2FF"
+              accent={BrandColors.orange}
+              bg={BrandColors.cream}
             />
             <DateBox
               label="Expiration"
@@ -239,6 +242,17 @@ export default function CardDetailsScreen({
             }
           />
         </Section>
+
+        {/* Anciens Permits */}
+        {/* <Section title="Anciens Permits"> */}
+        <TouchableOpacity
+          style={styles.historyButton}
+          onPress={() => onViewHistory(employee.employee_reference)}
+        >
+          <Text style={styles.historyButtonText}>Voir les anciens permis</Text>
+          <Text style={styles.historyButtonArrow}>→</Text>
+        </TouchableOpacity>
+        {/* </Section> */}
       </ScrollView>
     </SafeAreaView>
   );
@@ -326,7 +340,7 @@ function formatDate(dateString: string): string {
 /* ─── Styles ─── */
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#F8F8FC" },
+  container: { flex: 1, backgroundColor: "#F4F7F8" },
 
   header: {
     flexDirection: "row",
@@ -339,8 +353,12 @@ const styles = StyleSheet.create({
     borderBottomColor: "#F0F0F5",
   },
   backButton: { padding: 8 },
-  backButtonText: { fontSize: 16, fontWeight: "600", color: "#667eea" },
-  headerTitle: { fontSize: 18, fontWeight: "700", color: "#1A1A2E" },
+  backButtonText: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: BrandColors.orange,
+  },
+  headerTitle: { fontSize: 18, fontWeight: "700", color: BrandColors.navyDark },
   headerSpacer: { width: 60 },
 
   scrollView: { flex: 1 },
@@ -353,7 +371,7 @@ const styles = StyleSheet.create({
     marginBottom: 24,
     borderRadius: 20,
     overflow: "hidden",
-    shadowColor: "#667eea",
+    shadowColor: BrandColors.navy,
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.2,
     shadowRadius: 16,
@@ -496,7 +514,7 @@ const styles = StyleSheet.create({
   rowLabel: { fontSize: 14, color: "#888", fontWeight: "500", flex: 1 },
   rowValue: {
     fontSize: 14,
-    color: "#1A1A2E",
+    color: BrandColors.navyDark,
     fontWeight: "600",
     flex: 1,
     textAlign: "right",
@@ -522,7 +540,30 @@ const styles = StyleSheet.create({
   dateBoxValue: {
     fontSize: 14,
     fontWeight: "700",
-    color: "#1A1A2E",
+    color: BrandColors.navyDark,
     textAlign: "center",
+  },
+  historyButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginHorizontal: 16,
+    marginTop: 4,
+    paddingVertical: 14,
+    borderRadius: 14,
+    borderWidth: 1.5,
+    borderColor: BrandColors.orange,
+    backgroundColor: "#fff",
+    gap: 8,
+  },
+  historyButtonText: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: BrandColors.orange,
+  },
+  historyButtonArrow: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: BrandColors.orange,
   },
 });
