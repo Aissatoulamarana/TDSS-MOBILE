@@ -1,5 +1,5 @@
 import { LinearGradient } from "expo-linear-gradient";
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Animated,
   Image,
@@ -24,8 +24,8 @@ export default function CardDetailsScreen({
   onGoBack,
   onViewHistory,
 }: CardDetailsScreenProps) {
-  const animatedY = useRef(new Animated.Value(30)).current;
-  const animatedOpacity = useRef(new Animated.Value(0)).current;
+  const [animatedY] = useState(() => new Animated.Value(30));
+  const [animatedOpacity] = useState(() => new Animated.Value(0));
 
   const employeeName = [employee.first, employee.last]
     .filter(Boolean)

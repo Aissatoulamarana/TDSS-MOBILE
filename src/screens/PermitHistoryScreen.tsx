@@ -13,6 +13,32 @@ import { BrandColors } from "../constants/theme";
 import apiService from "../services/apiService";
 import { EmployeePermitHistoryItem } from "../types/index";
 
+interface HistoryResult {
+  items: EmployeePermitHistoryItem[];
+  error: string | null;
+}
+
+async function requestHistory(
+  employeeReference: string,
+): Promise<HistoryResult> {
+  try {
+    const data = await apiService.getEmployeePermitHistory(employeeReference);
+
+    // Normalize response: API may return an array or an object with a `results` array
+    const items: EmployeePermitHistoryItem[] = Array.isArray(data)
+      ? data
+      : Array.isArray((data as any)?.results)
+        ? (data as any).results
+        : [];
+    return { items, error: null };
+  } catch (err: any) {
+    return {
+      items: [],
+      error: err.message || "Impossible de charger l'historique",
+    };
+  }
+}
+
 interface PermitHistoryScreenProps {
   employeeReference: string;
   onGoBack: () => void;
@@ -27,37 +53,30 @@ export default function PermitHistoryScreen({
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchHistory = useCallback(
-    async (isRefresh = false) => {
-      if (isRefresh) setRefreshing(true);
-      else setLoading(true);
-      setError(null);
+  const applyHistory = useCallback((result: HistoryResult) => {
+    setItems(result.items);
+    setError(result.error);
+    setLoading(false);
+    setRefreshing(false);
+  }, []);
 
-      try {
-        const data =
-          await apiService.getEmployeePermitHistory(employeeReference);
+  const fetchHistory = (isRefresh = false) => {
+    if (isRefresh) setRefreshing(true);
+    else setLoading(true);
+    setError(null);
+    requestHistory(employeeReference).then(applyHistory);
+  };
 
-        // Normalize response: API may return an array or an object with a `results` array
-        const itemsData: EmployeePermitHistoryItem[] = Array.isArray(data)
-          ? data
-          : Array.isArray((data as any)?.results)
-            ? (data as any).results
-            : [];
-        setItems(itemsData);
-      } catch (err: any) {
-        setError(err.message || "Impossible de charger l'historique");
-        setItems([]);
-      } finally {
-        setLoading(false);
-        setRefreshing(false);
-      }
-    },
-    [employeeReference],
-  );
-
+  // Initial load: `loading` already starts at true
   useEffect(() => {
-    fetchHistory();
-  }, [fetchHistory]);
+    let ignore = false;
+    requestHistory(employeeReference).then((result) => {
+      if (!ignore) applyHistory(result);
+    });
+    return () => {
+      ignore = true;
+    };
+  }, [employeeReference, applyHistory]);
 
   return (
     <SafeAreaView style={styles.container}>

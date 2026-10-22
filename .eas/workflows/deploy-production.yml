@@ -1,0 +1,32 @@
+name: Deploy production
+
+on:
+  push:
+    branches: ["master"]
+
+jobs:
+  fingerprint:
+    type: fingerprint
+    environment: production
+  get_android_build:
+    needs: [fingerprint]
+    type: get-build
+    params:
+      fingerprint_hash: ${{ needs.fingerprint.outputs.android_fingerprint_hash }}
+      profile: production
+  build_android:
+    needs: [get_android_build]
+    if: ${{ !needs.get_android_build.outputs.build_id }}
+    type: build
+    params:
+      platform: android
+      profile: production
+  publish_android_update:
+    needs: [get_android_build]
+    if: ${{ needs.get_android_build.outputs.build_id }}
+    type: update
+    environment: production
+    params:
+      channel: production
+      platform: android
+      message: "Auto-deploy master"

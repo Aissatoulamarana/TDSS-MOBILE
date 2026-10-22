@@ -249,7 +249,7 @@ export default function QRScannerScreen({
           <CameraView
             onBarcodeScanned={handleBarCodeScanned}
             barcodeScannerSettings={{ barcodeTypes: ["qr"] }}
-            style={StyleSheet.absoluteFillObject}
+            style={StyleSheet.absoluteFill}
             enableTorch={flashMode === "on"}
           />
           {/* Overlay positionné en absolu, en dehors de CameraView */}
@@ -380,7 +380,7 @@ const styles = StyleSheet.create({
   modeButtonTextActive: { color: "#fff" },
   cameraContainer: { flex: 1, position: "relative", overflow: "hidden" },
   scannerOverlay: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -459,7 +459,7 @@ const styles = StyleSheet.create({
   searchButtonDisabled: { backgroundColor: "#F7C891" },
   searchButtonText: { fontSize: 16, fontWeight: "700", color: "#fff" },
   loadingOverlay: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     backgroundColor: "rgba(0,0,0,0.7)",
     justifyContent: "center",
     alignItems: "center",
