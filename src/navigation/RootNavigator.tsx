@@ -24,22 +24,22 @@ export default function RootNavigator() {
   const [view, setView] = useState<"details" | "history">("details");
 
   useEffect(() => {
-    restoreSession();
-  }, []);
-
-  const restoreSession = async () => {
-    try {
-      const storedUser = await authService.restoreToken();
-      if (storedUser) {
-        setUser(storedUser);
-        setScreenState({ type: "home" });
-      } else {
+    const restoreSession = async () => {
+      try {
+        const storedUser = await authService.restoreToken();
+        if (storedUser) {
+          setUser(storedUser);
+          setScreenState({ type: "home" });
+        } else {
+          setScreenState({ type: "auth" });
+        }
+      } catch {
         setScreenState({ type: "auth" });
       }
-    } catch {
-      setScreenState({ type: "auth" });
-    }
-  };
+    };
+
+    restoreSession();
+  }, []);
 
   const handleLoginSuccess = (newUser: User) => {
     setUser(newUser);
