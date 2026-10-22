@@ -1,8 +1,8 @@
-# 📱 TDSS-MOBILE - Application de Vérification de Cartes
+#  TDSS-MOBILE - Application de Vérification de Cartes
 
 Application mobile React Native/Expo pour la numérisation et la vérification des codes QR des cartes TDSS avec UI/UX moderne 2026.
 
-## 🎯 Fonctionnalités
+##  Fonctionnalités
 
 ✅ **Authentification sécurisée** - Connexion avec email/mot de passe  
 ✅ **Scanner QR** - Scan du code QR sur les cartes  
@@ -10,7 +10,7 @@ Application mobile React Native/Expo pour la numérisation et la vérification d
 ✅ **UI/UX Moderne** - Design gradients et animations fluides  
 ✅ **Stockage sécurisé** - Token sauvegardé de manière sécurisée
 
-## 🚀 Installation
+##  Installation
 
 ### Prérequis
 
@@ -35,7 +35,7 @@ npm install expo-camera expo-linear-gradient expo-secure-store
 EXPO_PUBLIC_API_URL=http://votre-backend.com/api
 ```
 
-## 📋 Configuration de l'API
+##  Configuration de l'API
 
 Assurez-vous que votre backend TDSS-Declaration expose les endpoints suivants:
 
@@ -85,7 +85,7 @@ Réponse:
 }
 ```
 
-## 🎨 Structure du Projet
+##  Structure du Projet
 
 ```
 TDSS-MOBILE/
@@ -107,7 +107,7 @@ TDSS-MOBILE/
 └── .env.local                     # Variables d'environnement
 ```
 
-## 🏃 Démarrage
+##  Démarrage
 
 ### Pour développement
 
@@ -135,14 +135,14 @@ eas build --platform android
 eas build --platform ios
 ```
 
-## 🔐 Sécurité
+##  Sécurité
 
 - Les tokens d'authentification sont stockés de manière sécurisée avec `expo-secure-store`
 - Les communications utilisent HTTPS en production
 - Les données sensibles ne sont pas loggées
 - Les permissions de caméra sont demandées explicitement à l'utilisateur
 
-## 📦 Dépendances Principales
+##  Dépendances Principales
 
 - **react-native**: Framework mobile
 - **expo**: Outils de développement React Native
@@ -151,7 +151,7 @@ eas build --platform ios
 - **expo-secure-store**: Stockage sécurisé
 - **typescript**: Type safety
 
-## 🤝 Intégration avec TDSS-Declaration
+##  Intégration avec TDSS-Declaration
 
 Cette application est conçue pour fonctionner avec le backend TDSS-Declaration. Les deux systèmes partagent:
 
@@ -159,11 +159,11 @@ Cette application est conçue pour fonctionner avec le backend TDSS-Declaration.
 - Les mêmes formats de données
 - Les mêmes règles de validation
 
-## 📝 Licence
+##  Licence
 
 © 2026 TDSS - Tous droits réservés
 
-## 📞 Support
+##  Support
 
 Pour toute question ou problème:
 
